@@ -113,7 +113,7 @@ if __name__ == "__main__":
         t.eval(val_set.get_samples())
     print(f"Eval fn compiled in {time.time() - start:.06}s")
 
-    wandb.init(project='mesh-transformer-jax')
+    wandb.init(project='mesh-transformer-jax', name=params["name"])
 
     eval_task_dict = tasks.get_task_dict(eval_tasks)
 
