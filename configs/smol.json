@@ -1,0 +1,44 @@
+{
+  "layers": 2,
+  "d_model": 768,
+  "n_heads": 8,
+  "n_vocab": 50400,
+  "norm": "layernorm",
+  "pe": "rotary",
+  "pe_rotary_dims": 64,
+
+  "seq": 2048,
+  "cores_per_replica": 8,
+  "per_replica_batch": 1,
+  "gradient_accumulation_steps": 16,
+
+  "warmup_steps": 4000,
+  "anneal_steps": 0,
+  "lr": 5e-06,
+  "end_lr": 1e-06,
+  "weight_decay": 0,
+  "total_steps": 430500,
+  "step_shift": 0,
+
+  "tpu_size": 8,
+
+  "bucket": "novelailm-modelbucket",
+  "model_dir": "smol2",
+
+  "train_set": "datasetv3.train.index",
+  "val_set": {
+    "adv-eval": "datasetv3.val.index"
+  },
+
+  "eval_harness_tasks": [
+    "lambada"
+  ],
+
+  "val_batches": 4,
+  "val_every": 5000,
+  "ckpt_every": 5000,
+  "keep_every": 5000,
+
+  "name": "smol",
+  "comment": ""
+}
