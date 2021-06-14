@@ -113,13 +113,15 @@ if __name__ == "__main__":
         t.eval(val_set.get_samples())
     print(f"Eval fn compiled in {time.time() - start:.06}s")
 
-    wandb.init(project='mesh-transformer-jax', name=params["name"])
+    wandb.init(project='mesh-transformer-jax')
 
     eval_task_dict = tasks.get_task_dict(eval_tasks)
 
     while True:
+        start = time.time()
         loss, last_loss = t.train(train_dataset.get_samples())
-        wandb.log({'train/loss': loss, 'train/last_loss': last_loss}, step)
+        steps_per_sec = 1 / (time.time() - start)
+        wandb.log({'train/loss': loss, 'train/last_loss': last_loss, 'train/steps_per_sec': float(steps_per_sec)}, step)
 
         if (step % ckpt_every == 0 and step) or step == total_steps:
             t.save(step, bucket, model_dir,
