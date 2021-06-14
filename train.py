@@ -149,9 +149,9 @@ if __name__ == "__main__":
 
             flat_results = {}
 
-            for task_name, task_res in results.items():
-                for metric_name, metric_res in task_res.items():
-                    flat_results[f"{task_name}/{metric_name}"] = float(metric_res)
+            for task in results["results"]:
+                for metric in results["results"][task]:
+                    flat_results[f"{task}/{metric}"] = float(results["results"][task][metric])
 
             dumped = json.dumps(results, indent=2)
             print(f"step {step} val results: {dumped}")
