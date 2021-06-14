@@ -77,6 +77,7 @@ class EvalHarnessAdaptor(LM):
                 b = shrink_seq(b)
 
             out = self.tpu.eval(b)
+            print(out)
 
             for loss, correct in zip(out["mask_loss"], out["each_correct"]):
                 output.append((float(-loss), bool(correct)))
