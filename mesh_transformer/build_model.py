@@ -11,7 +11,7 @@ from mesh_transformer.util import clip_by_global_norm, additive_weight_decay
 from ray_tpu import create_tpu, wait_til, get_connection, start_ray
 
 
-def build_model(params, tpu_name, region, preemptible):
+def build_model(params, tpu_name, region, preemptible, step_shift):
     gradient_accumulation_steps = params.get("gradient_accumulation_steps", 1)
     cores_per_replica = params["cores_per_replica"]
     tpu_size = params["tpu_size"]
@@ -43,7 +43,7 @@ def build_model(params, tpu_name, region, preemptible):
         optax.scale_by_adam(),
         additive_weight_decay(weight_decay),
         optax.scale(-1),
-        optax.scale_by_schedule(util.gpt3_schedule(warmup_steps, anneal_steps, lr, end_lr))
+        optax.scale_by_schedule(util.gpt3_schedule(warmup_steps, anneal_steps, lr, end_lr, step_shift))
     )
 
     params["optimizer"] = opt

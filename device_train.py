@@ -17,8 +17,7 @@ from tfrecord_loader import TFRecordNewInputs
 from smart_open import open
 from google.cloud import storage
 from google.cloud.exceptions import NotFound
-from lm_eval import evaluator, tasks
-from tasks.eval_harness import EvalHarnessAdaptor
+
 from mesh_transformer.util import clip_by_global_norm, additive_weight_decay
 
 
@@ -242,8 +241,6 @@ if __name__ == "__main__":
             network.state = read_ckpt(network.state, initial_ckpt_state_path, devices.shape[1])
             print(f"network loaded in {time.time() - start:.06}s")
 
-        adaptor = EvalHarnessAdaptor(network, seq, global_val_batch * 4, shrink=pe != "fixed")
-        
         print('compiling train fn')
         start = time.time()
         train_step(network, train_dataset.get_samples())
@@ -258,8 +255,6 @@ if __name__ == "__main__":
         print(f"Eval fn compiled in {time.time() - start:.06}s")
 
         wandb.init(project='mesh-transformer-jax', name=params["name"], config=params)
-
-        eval_task_dict = tasks.get_task_dict(eval_tasks)
 
         while True:
             if (step % ckpt_every == 1) or step == total_steps:
@@ -288,14 +283,6 @@ if __name__ == "__main__":
 
                     wandb.log({f'val/loss_{name}': float(val_loss)}, step)
 
-            results = evaluator.evaluate(adaptor, eval_task_dict, False, 0, None)
-            flat_results = {}
-
-            for task in results["results"]:
-                for metric in results["results"][task]:
-                    flat_results[f"{task}/{metric}"] = float(results["results"][task][metric])
-            
-            wandb.log(flat_results, step)
             start = time.time()
             loss, last_loss = train_step(network, train_dataset.get_samples())
             step += 1

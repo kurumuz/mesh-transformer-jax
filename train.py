@@ -66,11 +66,12 @@ if __name__ == "__main__":
     keep_every = params["keep_every"]
     eval_tasks = params["eval_harness_tasks"]
     total_steps = params["total_steps"]
+    step_shift = params.get("step_shift", 0)
 
     pe = params["pe"]
     assert pe in ["fixed", "rotary", "t5"]
 
-    t = build_model(params, tpu_name, region, preemptible)
+    t = build_model(params, tpu_name, region, preemptible, step_shift)
 
     try:
         t.save(0, bucket, model_dir, init=True, overwrite=clean_start)
